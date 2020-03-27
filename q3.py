@@ -41,22 +41,36 @@ def lookLeft(que:deque, n:int)->np.array:
 
 
 def convexHull2d(points_input: np.array)->np.array:
-    # sort points diclining
+    # sort points declining
     points=np.sort(points_input, kind='mergesort', order=['x','y'])
 
-    # initialise deque
-    if(ccw(points[0], points[1],points[2])>0):
-        que = deque([points[2], points[0], points[1], points[2]])
-    else:
-        que = deque([points[2], points[1], points[0], points[2]])
+    # find the last non inline point to the first two
+    last_non_inline=2
+    while(ccw(points[0], points[1],points[last_non_inline])==0):
+        last_non_inline+=1
+        if(last_non_inline==len(points)):
+            return np.empty(len(points), dtype=[('x', float), ('y', float)])
 
-    for i in range(3, len(points)):
+    # initialise deque with
+    if(ccw(points[0], points[last_non_inline-1],points[last_non_inline])>0):
+        que = deque([points[last_non_inline], points[0], points[last_non_inline-1], points[last_non_inline]])
+    elif(ccw(points[0], points[last_non_inline-1],points[last_non_inline])<0):
+        que = deque([points[last_non_inline], points[last_non_inline-1], points[0], points[last_non_inline]])
+    else:
+        print("error")
+        return []
+
+    for i in range(last_non_inline, len(points)):
         # maybe we dont need this
         # bot = look(que, 2)
         # top = lookLeft(que, 2)
         # if(ccw(top[0], top[1],points[i]) > 0 and
         #    ccw(bot[1], bot[0],points[i]) > 0):
         #     continue
+
+        for ii in que:
+            print(ii)
+        print("-----------")
 
         # remove all bottom points inside our (soon to be) polygon
         bot = look(que, 2)
@@ -78,19 +92,19 @@ def convexHull2d(points_input: np.array)->np.array:
         ans[i]=que.pop()
     return ans
 
+# -------------------------------------main----------------------
 
-# input = ((0, 2), (2, 2), (4, 2), (3, 3),
-#          (3, 2), (3, 1), (5, 2), (0, 2),
-#          (2, 4), (2, 0), (4, 4), (6, 2), (4, 0))
+# inputt=[(0,0),(1,1),(-1,1),(1,-1),(-1,-1)]
 
-# input = ((0,0),(1,1),(-1,1),(1,-1),(-1,-1))
+# inputt=[(0, 2), (2, 2), (4, 2), (3, 3),
+#       (3, 2), (3, 1), (5, 2), (0, 2),
+#       (2, 4), (2, 0), (4, 4), (6, 2), (4, 0)]
 
-# input = np.array([(0,0),(1,1),(-1,1),(1,-1),(-1,-1)],
-#                  dtype=[('x', float), ('y', float)])
-input = np.array([(0, 2), (2, 2), (4, 2), (3, 3),
-                  (3, 2), (3, 1), (5, 2), (0, 2),
-                  (2, 4), (2, 0), (4, 4), (6, 2), (4, 0)],
-                 dtype=[('x', float), ('y', float)])
+inputt=[(0, 1),(0, 3),(0, 2), (2, 2), (4, 2), (3, 3),
+      (3, 2), (3, 1), (5, 2), (0, 2),
+      (2, 4), (2, 0), (4, 4), (6, 2), (4, 0)]
+
+input = np.array(inputt, dtype=[('x', float), ('y', float)])
 ans=convexHull2d(input)
 for i in ans:
     print(i)
