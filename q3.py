@@ -49,12 +49,12 @@ def convexHull2d(points_input: np.array) -> np.array:
     while ccw(points[0], points[1],points[last_non_inline]) == 0:
         last_non_inline += 1
         if last_non_inline == len(points):
-            return np.empty(len(points), dtype=[('x', float), ('y', float)])
+            return np.empty(shape=(0, 0))
 
     # initialise deque with
     if ccw(points[0], points[last_non_inline-1], points[last_non_inline]) > 0:
         que = deque([points[last_non_inline], points[0], points[last_non_inline-1], points[last_non_inline]])
-    elif ccw(points[0], points[last_non_inline-1], points[last_non_inline]) < 0 :
+    elif ccw(points[0], points[last_non_inline-1], points[last_non_inline]) < 0:
         que = deque([points[last_non_inline], points[last_non_inline-1], points[0], points[last_non_inline]])
     else:
         print("error")
@@ -90,16 +90,13 @@ def convexHull2d(points_input: np.array) -> np.array:
 
 # -------------------------------------main----------------------
 
-# inputt=[(0,0),(1,1),(-1,1),(1,-1),(-1,-1)]
-
-# inputt=[(0, 2), (2, 2), (4, 2), (3, 3),
-#       (3, 2), (3, 1), (5, 2), (0, 2),
-#       (2, 4), (2, 0), (4, 4), (6, 2), (4, 0)]
-
-
-inputt=[(0, 1),(0, 3),(0, 2), (2, 2), (4, 2), (3, 3),
-      (3, 2), (3, 1), (5, 2), (0, 2),
-      (2, 4), (2, 0), (4, 4), (6, 2), (4, 0)]
+# read from file
+file_name = input("Give file name: ")
+inputt = []
+with open(file_name) as myfile:
+    for line in myfile:
+        x, y = line.partition(" ")[::2]
+        inputt.append((float(x), float(y)))
 
 input = np.array(inputt, dtype=[('x', float), ('y', float)])
 ans=convexHull2d(input)
