@@ -11,7 +11,7 @@ import numpy as np
 
 
 # returns ccw
-def ccw(A: np.array, B: np.array, C: np.array) -> int:
+def ccw(A: np.array, B: np.array, C: np.array) -> float:
     # Tests whether the turn formed by A, B, and C is ccw
     return (B['x'] - A['x']) * (C['y'] - A['y']) - (B['y'] - A['y']) * (C['x'] - A['x'])
 
