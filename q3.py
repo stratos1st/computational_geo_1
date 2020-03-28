@@ -8,36 +8,13 @@
 
 from collections import deque
 import numpy as np
+import sys
 
 
 # returns ccw
 def ccw(A: np.array, B: np.array, C: np.array) -> float:
     # Tests whether the turn formed by A, B, and C is ccw
     return (B['x'] - A['x']) * (C['y'] - A['y']) - (B['y'] - A['y']) * (C['x'] - A['x'])
-
-
-# returns the last n elements (without removing them)
-def look(que: deque, n: int) -> np.array:
-    if n <= 0:
-        return np.empty(shape=(0, 0))
-    ans=np.empty(shape=(n), dtype=[('x', float), ('y', float)])
-    for i in range(0,n):
-        ans[i]=que.pop()
-    for i in range(n-1,-1,-1):
-        que.append(ans[i])
-    return ans
-
-
-# returns the first n elements (without removing them)
-def lookLeft(que: deque, n: int) -> np.array:
-    if n <= 0:
-        return np.empty(shape=(0, 0))
-    ans=np.empty(shape=(n), dtype=[('x', float), ('y', float)])
-    for i in range(0,n):
-        ans[i]=que.popleft()
-    for i in range(n-1,-1,-1):
-        que.appendleft(ans[i])
-    return ans
 
 
 def convexHull2d(points_input: np.array) -> np.array:
@@ -68,18 +45,14 @@ def convexHull2d(points_input: np.array) -> np.array:
         #    ccw(bot[1], bot[0],points[i]) > 0):
         #     continue
 
-        # remove all bottom points inside our (soon to be) polygon
-        bot = look(que, 2)
-        while ccw(bot[1], bot[0],points[i]) <= 0:
+        # remove all bottom points inside o (soon to be) polygon
+        while ccw(que[-2], que[-1], points[i]) <= 0:
             que.pop()
-            bot = look(que,2)
         que.append(points[i])
 
         # remove all top points inside our (soon to be) polygon
-        top = lookLeft(que, 2)
-        while ccw(top[0], top[1], points[i]) <= 0:
+        while ccw(que[0], que[1], points[i]) <= 0:
             que.popleft()
-            top = lookLeft(que,2)
         que.appendleft(points[i])
 
     # reform output (not really needed)
@@ -91,9 +64,9 @@ def convexHull2d(points_input: np.array) -> np.array:
 # -------------------------------------main----------------------
 
 # read from file
-file_name = input("Give file name: ")
+file_name = sys.stdin.readline()
 inputt = []
-with open(file_name) as myfile:
+with open(file_name[:-1]) as myfile:
     for line in myfile:
         x, y = line.partition(" ")[::2]
         inputt.append((float(x), float(y)))
@@ -102,3 +75,4 @@ input = np.array(inputt, dtype=[('x', float), ('y', float)])
 ans=convexHull2d(input)
 for i in ans:
     print(i)
+
